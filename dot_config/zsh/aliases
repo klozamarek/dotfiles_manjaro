@@ -155,7 +155,7 @@ alias vnm='nvim -c ":NotMuch"'
 # | oil-search |
 # +------------+
 # {{{
-alias os="oil-search"
+alias os="oil"
 # }}}
 # +--------------+
 # | transmission |

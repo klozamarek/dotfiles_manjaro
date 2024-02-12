@@ -14,4 +14,7 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # default browser
 export BROWSER="/usr/bin/firefox"
-export WWW_HOME="https://duckduckgo.com/"
+export WWW_HOME="https://duckduckgo.com/lite"
+# export path to ruby gems
+export PATH="/home/ssserpent/.config/local/share/gem/ruby/3.0.0/bin:$PATH"
+
