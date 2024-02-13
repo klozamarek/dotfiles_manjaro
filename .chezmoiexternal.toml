@@ -37,3 +37,19 @@
     type = "git-repo"
     url = "https://github.com/pystardust/ytfzf.git"
     refreshPeriod = "168h"
+ ["Repos/mutt-wizard"]
+    type = "git-repo"
+    url = "https://github.com/LukeSmithxyz/mutt-wizard.git"
+    refreshPeriod = "168h"
+ ["Repos/oil"]
+    type = "git-repo"
+    url = "https://github.com/AndreiUlmeyda/oil.git"
+    refreshPeriod = "168h"
+ ["Repos/pam-gnupg"]
+    type = "git-repo"
+    url = "https://github.com/cruegge/pam-gnupg.git"
+    refreshPeriod = "168h"
+ ["Repos/pass-tessen"]
+    type = "git-repo"
+    url = "https://github.com/ayushnix/pass-tessen.git"
+    refreshPeriod = "168h"
