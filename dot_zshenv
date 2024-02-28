@@ -1,0 +1,20 @@
+export ZDOTDIR=~/.config/zsh
+export XDG_CONFIG_HOME=$HOME/.config
+export TERM='xterm-kitty'
+export VISUAL='nvim'
+export HISTFILE="$ZDOTDIR/.zhistory"
+export HISTSIZE=10000
+export SAVEHIST=10000
+export MANPAGER='nvim +Man!'
+# default browser
+export BROWSER="/usr/bin/firefox"
+export WWW_HOME="https://duckduckgo.com/lite"
+# export path to ruby gems
+export PATH="/home/ssserpent/.config/local/share/gem/ruby/3.0.0/bin:$PATH"
+# fzf and ripgrep
+export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# pass clipboard timout
+export PASSWORD_STORE_CLIP_TIME='90'    # set-up for 90 seconds clipboard clear for pass
+export BAT_THEME="gruvbox-dark"
+

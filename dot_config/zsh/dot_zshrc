@@ -20,20 +20,6 @@ alias ssh="TERM=xterm-256color ssh"
 source ~/.config/user-dirs.dirs
 
 # MK settings added
-export HISTFILE="$ZDOTDIR/.zhistory"
-export HISTSIZE=10000
-export SAVEHIST=10000
-export TERM='xterm-kitty'
-export VISUAL='nvim'
-export MANPAGER='nvim +Man!'
-# fzf and ripgrep
-export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-# default browser
-export BROWSER="/usr/bin/firefox"
-export WWW_HOME="https://duckduckgo.com/lite"
-# export path to ruby gems
-export PATH="/home/ssserpent/.config/local/share/gem/ruby/3.0.0/bin:$PATH"
 source "$ZDOTDIR/aliases"
 source "$ZDOTDIR/scripts.sh"
 
@@ -45,8 +31,4 @@ eval "$(zoxide init zsh)"
 bindkey -r '^l'                         # Clearing the shell is now done with CTRL+r
 bindkey -r '^g'
 bindkey -s '^r' 'clear\n'
-
-export PASSWORD_STORE_CLIP_TIME='90'    # set-up for 90 seconds clipboard clear for pass
-
-export BAT_THEME="gruvbox-dark"
 
