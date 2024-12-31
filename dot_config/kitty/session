@@ -5,9 +5,9 @@ enabled_layouts splits
 new_tab ranger
 launch ranger
 enabled_layouts splits
-# new_tab mail
-# launch neomutt
-# enabled_layouts splits
+new_tab mail
+launch neomutt
+enabled_layouts splits
 new_tab cmus
 launch cmus
 enabled_layouts splits

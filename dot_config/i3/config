@@ -351,7 +351,7 @@ bindsym $mod+control+Print exec /home/ssserpent/.config/zsh/external/screenshot.
 bindsym $mod+control+shift+Print exec /home/ssserpent/.config/zsh/external/screenshot.sh selecttime
 # }}}
 #-- launch apps on startup {{{
-exec --no-startup-id udiskie &
+exec --no-startup-id udiskie --automount &
 exec --no-startup-id brave
 exec --no-startup-id calibre
 exec --no-startup-id kitty --session $XDG_CONFIG_HOME/kitty/session

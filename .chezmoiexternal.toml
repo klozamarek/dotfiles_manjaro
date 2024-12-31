@@ -53,3 +53,7 @@
     type = "git-repo"
     url = "https://github.com/ayushnix/pass-tessen.git"
     refreshPeriod = "168h"
+[".config/zsh/ohmyzsh"]
+    type = "git-repo"
+    url = "https://github.com/ohmyzsh/ohmyzsh.git"
+    refreshPeriod = "168h"

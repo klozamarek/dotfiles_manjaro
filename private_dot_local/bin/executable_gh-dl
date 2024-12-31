@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+GH_API="https://api.github.com"
+if [ -n "$TERMUX_VERSION" ]; then
+	# setup termux storage first
+	# https://wiki.termux.com/wiki/Termux-setup-storage
+	DL_PATH="${GHDL_PATH:-$HOME/storage/downloads}"
+else
+	DL_PATH="${GHDL_PATH:-$HOME/Downloads/gh-dl}"
+fi
+
+message() {
+	local color
+	case "$1" in
+	blue) color=$(tput setaf 4 && tput bold) ;;
+	red) color=$(tput setaf 1 && tput bold) ;;
+	green) color=$(tput setaf 2 && tput bold) ;;
+	yellow) color=$(tput setaf 3 && tput bold) ;;
+	esac
+	printf "%s%s%s\n" "$color" "$2" "$(tput sgr0)"
+}
+
+command_exist() { command -v "$1" >/dev/null 2>&1; }
+for dep in fzf jq curl; do command_exist "$dep" || {
+	message red "Error: $dep is not installed." >&2
+	exit 1
+}; done
+
+usage() {
+	cat <<EOF >&2
+Usage: $(message "blue" "$(basename "$0")") [Options] $(message "blue" "<username>/<reponame>")
+
+$(message "green" "Options:")
+$(message "yellow" "-a, --all")             List all the releases (default: latest version)
+$(message "yellow" "-d, --output")          Download path directory (default: $DL_PATH)
+$(message "yellow" "-h, --help")            Show this help message
+EOF
+}
+# TODO: --install flag?
+all_assets=false
+directory=${directory:-$DL_PATH}
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	-a | --all) all_assets=true && shift ;;
+	-d | --output)
+		directory="$2"
+		[[ -z "$directory" ]] && { message yellow "Error: Directory not specified." >&2 && exit 1; }
+		[[ ! -d "$directory" ]] && { message red "Error: Invalid directory path." >&2 && exit 1; }
+		shift 2
+		;;
+	-h | --help) usage && exit 0 ;;
+	-*)
+		message red "Error: Unknown option: $1" >&2
+		usage
+		exit 1
+		;;
+	*) query_repo="$1" && shift ;;
+	esac
+done
+
+# Main
+
+search_repo() {
+	local query_encoded="${1//' '/'%20'}"
+	search_result=$(curl -s ${GH_API}/search/repositories?q="$query_encoded" | jq -r '.items[] | .full_name')
+	[[ -z "$search_result" ]] && { message red "No results found. Search and try again." && exit; }
+	query_repo=$(echo "$search_result" | fzf --color=fg:bold:blue --prompt="Select repository: > ")
+	[[ -z "$query_repo" ]] && exit
+}
+
+query_repo=${query_repo:-$(read -rp "$(message blue "Search repository: ")" && echo "$REPLY")}
+[[ "$query_repo" =~ ^[[:alnum:]-]+/[[:alnum:]-]+$ ]] || { search_repo "$query_repo"; }
+
+assets=$(curl -s "${GH_API}/repos/${query_repo}/releases${all_assets:+?per_page=100}" | jq -r 'if '"$all_assets"' then .[].assets[] else (. | sort_by(.created_at) | reverse | .[0].assets[]) end | [.name, .browser_download_url] | join(" -- ")')
+[[ -z "$assets" ]] && { message yellow "No releases found for this repository: \"${query_repo}\"" && exit; }
+
+selected_asset=$(echo "$assets" | fzf --with-nth=1 --color=fg:bold:blue --prompt="Select what to download: > ")
+[[ -z "$selected_asset" ]] && exit
+
+url=$(echo "$selected_asset" | awk -F ' -- ' '{print $2}')
+filename=$(echo "$selected_asset" | awk -F ' -- ' '{print $1}')
+message green "Downloading ${filename}..."
+if command_exist aria2c; then
+	aria2c --dir="$directory" --file-allocation=none --continue "$url"
+else
+	[[ -d "$directory" ]] || mkdir -p "$directory"
+	curl -L -o "$directory/$(basename "$url")" "$url"
+fi
