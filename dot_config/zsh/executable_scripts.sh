@@ -1,8 +1,5 @@
 #!/bin/zsh
-# +-----------------+
-# | file management |
-# +-----------------+
-#-- file rename to my specific format{{{
+#-- renf() file rename to my specific format --{{{
 renf () {
 # Use fzf to choose the file to rename
 filename=$(find . -maxdepth 1 -type f -printf '%f\n' | fzf --preview 'echo {}' --prompt='Choose a file to rename: ')
@@ -54,21 +51,21 @@ mv "$filename" "$new_filename"
 
 echo "File renamed to $new_filename."
 }
-#--------------------------------------------}}}
-#-- replace whitespaces with underscores and make lowercase all filenames in cwd{{{
+#}}}
+# -- lowscore() replace whitespaces with underscores and make lowercase all filenames in cwd --{{{
 lowscore () {
 for file in *; do 
     mv "$file" "${file// /_}" >/dev/null 2>&1 
     mv "${file// /_}" "$(echo ${file// /_} | tr '[:upper:]' '[:lower:]')" >/dev/null 2>&1; 
 done
 }
-#--------------------------------------------
-# Compress a file
+#}}}
+# -- compress() Compress a file --{{{
 compress() {
     tar cvzf $1.tar.gzd $1
 }
-#--------------------------------------------
-# mail file using nnn
+#}}}
+# -- mailf() mail file using nnn --{{{
 mailf() {
     if [[ $1 == *@* ]]; then
         mail -a $(nnn -p -) $1
@@ -76,14 +73,14 @@ mailf() {
         echo "cannot send :( - please provide email adress"
     fi
 }
-#--------------------------------------------}}}
-#-- Open pdf with Zathura{{{
+#}}}
+#-- fpdf() Open pdf with Zathura --{{{
 fpdf() {
     result=$(find -type f -name '*.pdf' | fzf --bind "ctrl-r:reload(find -type f -name '*.pdf')" --preview "pdftotext {} - | less")
     [ -n "$result" ] && nohup zathura "$result" &> /dev/null & disown
 }
-#--------------------------------------------}}}
-#-- Internal function to extract any file{{{
+#}}}
+#-- _ex() Internal function to extract any file --{{{
 _ex() {
     case $1 in
         *.tar.bz2)  tar xjf $1      ;;
@@ -101,8 +98,8 @@ _ex() {
         *)          echo "'$1' cannot be extracted" ;;
     esac
 }
-#--------------------------------------------}}}
-#-- configure nnn cd on quit{{{
+#}}}
+# -- n() configure nnn cd on quit --{{{
 n ()
 {
     # Block nesting of nnn in subshells
@@ -133,19 +130,13 @@ n ()
         rm -f "$NNN_TMPFILE" > /dev/null
     }
 }
-#--------------------------------------------------}}}
-# +--------+
-# | backup |
-# +--------+
-# {{{
+#}}}
+# -- backup() Backup of chosen files/dirs --{{{
 backup() {
     "$HOME/.bash/scripts/backup/backup.sh" "-x" "$@" "$HOME/.bash/scripts/backup/dir.csv"
 }
-# }}}
-# +------+
-# | tmux |
-# +------+
-# {{{
+#}}}
+# -- ftmuxp() --{{{
 ftmuxp() {
     if [[ -n $TMUX ]]; then
         return
@@ -170,8 +161,8 @@ ftmuxp() {
         tmuxp load "$ID"
     fi
 }
-#--------------------------------------------}}}
-#-- Run man pages in nvim{{{
+#}}}
+# -- vman() Run man pages in nvim --{{{
 vman() {
     nvim -c "SuperMan $*"
 
@@ -179,13 +170,13 @@ vman() {
         echo "No manual entry for $*"
     fi
 }
-#--------------------------------------------}}}
-#-- Run scratchpad {{{
+#}}}
+# -- scratchpad() Run scratchpad -DEPRECATED!!! --{{{
 scratchpad() {
     "$DOTFILES/zsh/scratchpad.sh"
 }
-#--------------------------------------------}}}
-#-- Run script preventing shell run ranger run shell{{{
+#}}}
+#-- ranger() Run script preventing shell run ranger run shell --{{{
 ranger() {
     if [ -z "$RANGER_LEVEL" ]; then
         /usr/bin/ranger "$@"
@@ -193,21 +184,31 @@ ranger() {
         exit
     fi
 }
-# }}}
-# +----------------+
-# | sys management |
-# +----------------+
-#-- Run script to update Arch and others{{{
+#}}}
+# -- updatesys() Run script to update Arch and others --{{{
 updatesys() {
     sh $HOME/update.sh
 }
-#--------------------------------------------}}}
-#-- history statistics{{{
+#}}}
+# -- sgpt shell integration() seamless command AI creation --{{{
+_sgpt_zsh() {
+if [[ -n "$BUFFER" ]]; then
+    _sgpt_prev_cmd=$BUFFER
+    BUFFER+="⌛"
+    zle -I && zle redisplay
+    BUFFER=$(sgpt --shell <<< "$_sgpt_prev_cmd" --no-interaction)
+    zle end-of-line
+fi
+}
+zle -N _sgpt_zsh
+bindkey "^l" _sgpt_zsh
+#}}}
+# -- historystat() history statistics --{{{
 historystat() {
     history 0 | awk '{ if ($2 == "sudo") {print $3} else {print $2} }' | awk -v "FS=|" '{print $1}' | sort | uniq -c | sort -r -n | head -15
 }
-#--------------------------------------------}}}
-#-- check if the package is installed{{{
+#}}}
+# -- _isInstalled() check if the package is installed --{{{
 # usage `_isInstalled "package_name"`
 # output 1 not installed; 0 already installed
 _isInstalled() {
@@ -220,8 +221,8 @@ _isInstalled() {
     echo "NOT installed"; #'1' means 'false' in zsh
     return; #false
 }
-#--------------------------------------------}}}
-#-- install <pkg>{{{
+#}}}
+# -- _install() install <pkg> --{{{
 _install() {
     package="$1";
 
@@ -236,8 +237,8 @@ _install() {
         sudo pacman -S "${package}";
     fi;
 }
-#--------------------------------------------}}}
-#-- installMany <pkg1> <pkg2> ...{{{
+#}}}
+# -- _installMany() installMany <pkg1> <pkg2> ... --{{{
 # Works the same as `_install` above,
 # but you can pass more than one package to this one.
 _installMany() {
@@ -266,48 +267,43 @@ _installMany() {
     printf "Packages not installed:\n%s\n" "${toInstall[@]}";
     sudo pacman -S "${toInstall[@]}";
 }
-#--------------------------------------------}}}
-#-- list all user installed software with description{{{
-
+#}}}
+# -- list_apps() list all user installed software with description --{{{
 list_apps() {
 
     for line in "$(pacman -Qqe)"; do pacman -Qi $(echo "$line") ; done | perl -pe 's/ +/ /gm' | perl -pe 's/^(Groups +: )(.*)/$1($2)/gm' | perl -0777 -pe 's/^Name : (.*)\nVersion :(.*)\nDescription : ((?!None).*)?(?:.|\n)*?Groups :((?! \(None\)$)( )?.*)?(?:.|\n(?!Name))+/$1$2$4\n    $3/gm' | grep -A1 --color -P "^[^\s]+"
 }
-# }}}
-# +-------+
-# | music |
-# +-------+
-#-- Run function to convert .ape -> .flac{{{
+#}}}
+# -- ape2flac() Run function to convert .ape -> .flac --{{{
 # function to convert .ape file to .flac file
 # run from the relevant directory
 ape2flac() {
 find . -name "*.ape" -exec sh -c 'exec ffmpeg -i "$1" "${1%.ape}.flac"' _ {} \;
 }
-#--------------------------------------------}}}
-#-- Run function to split flac files from cue sheet{{{
+#}}}
+# -- cue2flac() Run function to split flac files from cue sheet --{{{
 # function to split individual flac files from cue sheet
 # output is <nr>-<SongName>
 # run from relevant directory
 cue2flac() {
 find . -name "*.cue" -exec sh -c 'exec shnsplit -f "$1" -o flac -t "%n-%t" "${1%.cue}.flac"' _ {} \;
 }
-#--------------------------------------------}}}
-#-- Run function to tag flac files from cue sheet{{{
+#}}}
+# -- tag2flac() Run function to tag flac files from cue sheet --{{{
 # function to tag flac files from cue sheet
 # remove the unsplit flac file FIRST!
 tag2flac() {
     echo "please remove the unsplit (large) .flac file FIRST!!"
     find . -name "*.cue" -execdir sh -c 'exec cuetag.sh "$1" *.flac' _ {} \;
 } 
-#--------------------------------------------}}}
-#-- Run function to convert .wav -> flac{{{
+#}}}
+# -- wav2flac() Run function to convert .wav -> flac --{{{
 # run from relevant directory
 wav2flac() {
       find . -name "*.wav" -exec sh -c 'exec ffmpeg -i "$1" "${1%.wav}.flac"' _ {} \;
 }
-#--------------------------------------------}}}
-
-#-- zsh completion{{{
+#}}}
+# -- zshcomp() zsh completion --{{{
 # Display all autocompleted command in zsh.
 # First column: command name Second column: completion function
 zshcomp() {
@@ -316,8 +312,8 @@ zshcomp() {
         printf "%-32s %s\n" $command $completion
     done | sort
 }
-#--------------------------------------------}}}
-#-- ripgrep-all and fzf intergation as per t.ly/fCsVn{{{
+#}}}
+# -- rga-fzf() ripgrep-all and fzf intergation as per t.ly/fCsVn --{{{
 rga-fzf() {
 	RG_PREFIX="rga --files-with-matches"
 	local file
@@ -331,8 +327,8 @@ rga-fzf() {
 	echo "opening $file" &&
 	xdg-open "$file"
 }
-#--------------------------------------------}}}
-#-- Find in File using ripgrep{{{
+#}}}
+# -- fif() Find in File using ripgrep --{{{
 fif() {
   if [ ! "$#" -gt 0 ]; then return 1; fi
   rg --files-with-matches --no-messages "$1" \
@@ -340,8 +336,8 @@ fif() {
       | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' \
       || rg --ignore-case --pretty --context 10 '$1' {}"
 }
-#--------------------------------------------}}}
-#-- Find in file using ripgrep-all{{{
+#}}}
+# -- fifa() Find in file using ripgrep-all --{{{
 fifa() {
     if [ ! "$#" -gt 0 ]; then return 1; fi
     local file
@@ -349,8 +345,8 @@ fifa() {
         | fzf-tmux -p +m --preview="rga --ignore-case --pretty --context 10 '"$*"' {}")" \
         && print -z "./$file" || return 1;
 }
-#--------------------------------------------}}}
-#-- to show in nnn mime-type of files (nnn related){{{
+#}}}
+# -- list() to show in nnn mime-type of files (nnn related) --{{{
 # posible types: audio, video, image, text, application, font
 # for full list google "common mime types"
 # to show video files, run: list video
@@ -359,40 +355,29 @@ list ()
     find . -maxdepth 1 | file -if- | grep "$1" | awk -F: '{printf "%s\0", $1}' | nnn
     # fd -d 1 | file -if- | grep "$1" | awk -F: '{printf "%s\0", $1}' | nnn
 }
-# }}}
-# +---------+
-# | imaging |
-# +---------+
-#-- Take a screenshot{{{
+#}}}
+# -- screenshot() Take a screenshot --{{{
 screenshot () {
     local DIR="$SCREENSHOT"
     local DATE="$(date +%Y%m%d-%H%M%S)"
     local NAME="${DIR}/screenshot-${DATE}.png"
-
     # Check if the dir to store the screenshots exists, else create it:
     if [ ! -d "${DIR}" ]; then mkdir -p "${DIR}"; fi
-
     # Screenshot a selected window
     if [ "$1" = "win" ]; then import -format png -quality 100 "${NAME}"; fi
-
     # Screenshot the entire screen
     if [ "$1" = "scr" ]; then import -format png -quality 100 -window root "${NAME}"; fi
-
     # Screenshot a selected area
     if [ "$1" = "area" ]; then import -format png -quality 100 "${NAME}"; fi
-
     if [[ $1 =~ "^[0-9].*x[0-9].*$" ]]; then import -format png -quality 100 -resize $1 "${NAME}"; fi
-
     if [[ $1 =~ "^[0-9]+$" ]]; then import -format png -quality 100 -resize $1 "${NAME}" ; fi
-
     if [[ $# = 0 ]]; then
         # Display a warning if no area defined
         echo "No screenshot area has been specified. Please choose between: win, scr, area. Screenshot not taken."
     fi
 }
-# }}}
-
-#-- notetaking function {{{
+#}}}
+# -- an() notetaking function --{{{
 # usage : an <filename> "text"
 # when prompted choose tags separated by spaces and hit ENTER
 # if you choose to create new tag enter new tag_name
@@ -462,4 +447,147 @@ an() {
   # create the file if it does not exist and append the note to the file on the ssh server
   ssh ssserpent@antix "touch \"$HOME/Documents/$filename\" && echo \"$note\" >> \"$HOME/Documents/$filename\""
 }
-#---------------------------------------------------------------}}}
+#}}}
+# -- cfg-...() core configurations --{{{
+cfg-zshrc() {chezmoi edit /home/ssserpent/.config/zsh/.zshrc ;}
+cfg-zshenv() {chezmoi edit /home/ssserpent/.zshenv ;}
+cfg-zprofile() {chezmoi edit /home/ssserpent/.config/zsh/.zprofile ;}
+cfg-aliases() {chezmoi edit /home/ssserpent/.config/zsh/aliases ;}
+cfg-scripts() {chezmoi edit /home/ssserpent/.config/zsh/scripts.sh ;}
+cfg-xinit() {chezmoi edit /home/ssserpent/.config/X11/.xinitrc ;}
+cfg-xresources() {chezmoi edit /home/ssserpent/.config/X11/.Xresources ;}
+cfg-xauthority() {chezmoi edit /home/ssserpent/.Xauthority ;}
+#}}}
+# -- cfg-...() apps configurations -- {{{
+cfg-aria2() {chezmoi edit /home/ssserpent/.aria2/aria2.conf ;}
+cfg-afew() {chezmoi edit /home/ssserpent/.config/afew/config}
+cfg-atuin() {chezmoi edit /home/ssserpent/.config/atuin/config.toml ;}
+cfg-bat() {chezmoi edit /home/ssserpent/.config/bat/config ;}
+cfg-btop() {chezmoi edit /home/ssserpent/.config/btop/btop.conf ;}
+cfg-calcurse() {chezmoi edit /home/ssserpent/.config/calcurse/conf ;}
+cfg-chezmoi() {$EDITOR /home/ssserpent/.config/chezmoi/chezmoi.toml ;}
+cfg-chezmoiexternal() {$EDITOR /home/ssserpent/.config/local/share/chezmoi/.chezmoiexternal.toml ;}
+cfg-dmenu() {chezmoi edit /home/ssserpent/.config/dmenufm/dmenufm.conf ;}
+cfg-dunst() {chezmoi edit /home/ssserpent/.config/dunst/dunstrc ;}
+cfg-epy() {chezmoi edit /home/ssserpent/.config/epy/configuration.json ;}
+cfg-htop() {chezmoi edit /home/ssserpent/.config/htop/htoprc ;}
+cfg-i3conf() {chezmoi edit /home/ssserpent/.config/i3/config ;}
+cfg-i3blocks() {chezmoi edit /home/ssserpent/.config/i3/i3blocks.conf ;}
+cfg-i3status() {chezmoi edit /home/ssserpent/.config/i3/i3status.conf ;}
+cfg-kitty() {chezmoi edit /home/ssserpent/.config/kitty/kitty.conf ;}
+cfg-session() {chezmoi edit /home/ssserpent/.config/kitty/session ;}
+cfg-msmtp() {chezmoi edit /home/ssserpent/.config/msmtp/config ;}
+cfg-mutt() {chezmoi edit /home/ssserpent/.config/mutt/muttrc ;}
+cfg-navi() {chezmoi edit /home/ssserpent/.config/navi/config.yaml ;}
+cfg-neofetch() {chezmoi edit /home/ssserpent/.config/neofetch/config.conf ;}
+cfg-newsboat() {chezmoi edit /home/ssserpent/.config/newsboat/config ;}
+cfg-newsboaturls() {chezmoi edit /home/ssserpent/.config/newsboat/urls ;}
+cfg-notmuch() {chezmoi edit /home/ssserpent/.config/notmuch/.notmuch-config ;}
+cfg-nvim() {chezmoi edit /home/ssserpent/.config/nvim/init.vim ;}
+cfg-ranger() {chezmoi edit /home/ssserpent/.config/ranger/rc.conf ;}
+cfg-rangercommands() {chezmoi edit /home/ssserpent/.config/ranger/commands.py ;}
+cfg-rofi() {chezmoi edit /home/ssserpent/.config/rofi/ssserpent.rasi ;}
+cfg-sgpt() {chezmoi edit /home/ssserpent/.config/shell_gpt/.sgptrc ;}
+cfg-solaar() {chezmoi edit /home/ssserpent/.config/solaar/config.yaml ;}
+cfg-stig() {chezmoi edit /home/ssserpent/.config/stig/rc ;}
+cfg-surfraw() {chezmoi edit /home/ssserpent/.config/surfraw/conf ;}
+cfg-termscp() {chezmoi edit /home/ssserpent/.config/termscp/config.toml ;}
+cfg-tmux() {chezmoi edit /home/ssserpent/.config/tmux/tmux.conf ;}
+cfg-tsm() {chezmoi edit /home/ssserpent/.config/transmission-daemon/settings.json ;}
+cfg-vlc() {chezmoi edit /home/ssserpent/.config/vlc/vlcrc ;}
+cfg-ytfzf() {chezmoi edit /home/ssserpent/.config/ytfzf/conf.sh ;}
+cfg-zathura() {chezmoi edit /home/ssserpent/.config/zathura/zathurarc ;}
+cfg-digicamsystem() {chezmoi edit /home/ssserpent/.config/digikam_systemrc ;}
+cfg-digikam() {chezmoi edit /home/ssserpent/.config/digikamrc ;}
+cfg-mimelist() {chezmoi edit /home/ssserpent/.config/mimeapps.list ;}
+cfg-starship() {chezmoi edit /home/ssserpent/.config/starship.toml ;}
+cfg-userdirs() {chezmoi edit /home/ssserpent/.config/user-dirs.dirs ;}
+cfg-gitconfig() {chezmoi edit /home/ssserpent/.gitconfig ;}
+cfg-mbsyncrc() {chezmoi edit /home/ssserpent/.mbsyncrc ;}
+cfg-msmtprc() {chezmoi edit /home/ssserpent/.msmtprc ;}
+cfg-pamgnupg() {chezmoi edit /home/ssserpent/.pam-gnupg ;}
+cfg-urlview() {chezmoi edit /home/ssserpent/.urlview ;}
+cfg-xbindkeys() {chezmoi edit /home/ssserpent/.xbindkeysrc ;}
+cfg-apps() {chezmoi edit /home/ssserpent/apps.csv ;}
+cfg-w3m() {chezmoi edit /home/ssserpent/.w3m/config ;}
+cfg-w3mkeymap() {chezmoi edit /home/ssserpent/.w3m/keymap ;}
+cfg-w3mmailcap() {chezmoi edit /home/ssserpent/.w3m/mailcap ;}
+cfg-w3murimethodmap() {chezmoi edit /home/ssserpent/.w3m/urimethodmap ;}
+# cfg-() {chezmoi edit ;}
+#}}}
+# -- rld-...() configurations reload --{{{
+# rld-bashrc() { source ~/.bashrc ;}
+rld-font() { fc-cache -v -f ;}
+rld-grub() { sudo grub-mkconfig -o /boot/grub/grub.cfg ;}
+rld-greenclip() { killall greenclip ; nohup greenclip daemon > /dev/null 2>&1 & }
+# rld-keynav() { killall keynav ; keynav daemonize ;}
+rld-updatedb() { sudo updatedb ;}
+# rld-rawdog() { rawdog -Wuwv ;}
+rld-xbindkeys() { killall xbindkeys ; xbindkeys ;}
+# rld-hyperkey() { xmodmap ~/.Xmodmap; killall xcape ; xcape -e 'Hyper_L=Return' ; killall xbindkeys ; xbindkeys ;}
+# rld-xcape() { killall xcape ; xcape -e 'Hyper_L=Return' ;}
+# rld-xdefaults() { xrdb ~/.Xdefaults ;}
+# rld-xmodmap() { xmodmap ~/.Xmodmap ;}
+# rld-xmodmap-uskeyboardlayout() { setxkbmap -layout us ;} # reset back to US keyboard http://unix.stackexchange.com/a/151046
+rld-xresources() { xrdb -load ~/.Xresources ;}
+rld-zshrc() { source ~/.config/zsh/.zshrc ;}
+rld-samba() { sudo systemctl restart nmb.service smb.service ;}
+rld-zshenv() { source ~/.zshenv ;}
+rld-aliases() { source ~/.config/zsh/aliases ;}
+rld-scripts() {source ~/.config/zsh/scripts.sh ;}
+#}}}
+# -- tsm-...() Transmission CLI v2 --{{{
+# DEMO: http://www.youtube.com/watch?v=ee4XzWuapsE
+# DESC: lightweight torrent client; interface from cli, webui, ncurses, and gui
+# WEBUI:  http://localhost:9091/transmission/web/
+# 	  http://192.168.1.xxx:9091/transmission/web/
+tsm-clearcompleted() {
+  transmission-remote -l | grep 100% | grep Done | \
+  awk '{print $1}' | xargs -n 1 -I % transmission-remote -t % -r
+}
+# display numbers of ip being blocked by the blocklist (credit: smw from irc #transmission)
+tsm-count() {
+  echo "Blocklist rules:" $(curl -s --data \
+  '{"method": "session-get"}' localhost:9091/transmission/rpc -H \
+  "$(curl -s -D - localhost:9091/transmission/rpc | grep X-Transmission-Session-Id)" \
+  | cut -d: -f 11 | cut -d, -f1)
+}
+# DEMO: http://www.youtube.com/watch?v=TyDX50_dC0M
+# DESC: merge multiple ip blocklist into one
+# LINK: https://github.com/gotbletu/shownotes/blob/master/blocklist.sh
+tsm-blocklist() {
+  echo -e "${Red}>>>Stopping Transmission Daemon ${Color_Off}"
+    killall transmission-daemon
+  echo -e "${Yellow}>>>Updating Blocklist ${Color_Off}"
+    ~/.scripts/blocklist.sh
+  echo -e "${Red}>>>Restarting Transmission Daemon ${Color_Off}"
+    transmission-daemon
+    sleep 3
+  echo -e "${Green}>>>Numbers of IP Now Blocked ${Color_Off}"
+    tsm-count
+}
+tsm-altdownloadspeed() { transmission-remote --downlimit "${@:-900}" ;}	# download default to 900K, else enter your own
+tsm-altdownloadspeedunlimited() { transmission-remote --no-downlimit ;}
+tsm-limitupload() { transmission-remote --uplimit "${@:-10}" ;}	# upload default to 10kpbs, else enter your own
+tsm-limituploadunlimited() { transmission-remote --no-uplimit ;}
+tsm-askmorepeers() { transmission-remote -t"$1" --reannounce ;}
+tsm-daemon() { transmission-daemon ;}
+tsm-quit() { killall transmission-daemon ;}
+tsm-add() { transmission-remote --add "$1" ;}
+tsm-hash() { transmission-remote --add "magnet:?xt=urn:btih:$1" ;}       # adding via hash info
+tsm-verify() { transmission-remote --verify "$1" ;}
+tsm-pause() { transmission-remote -t"$1" --stop ;}		# <id> or all
+tsm-start() { transmission-remote -t"$1" --start ;}		# <id> or all
+tsm-purge() { transmission-remote -t"$1" --remove-and-delete ;} # delete data also
+tsm-remove() { transmission-remote -t"$1" --remove ;}		# leaves data alone
+tsm-info() { transmission-remote -t"$1" --info ;}
+tsm-speed() { while true;do clear; transmission-remote -t"$1" -i | grep Speed;sleep 1;done ;}
+tsm-grep() { transmission-remote --list | grep -i "$1" ;}
+tsm() { transmission-remote --list ;}
+tsm-show() { transmission-show "$1" ;}                          # show .torrent file information
+
+# DEMO: http://www.youtube.com/watch?v=hLz7ditUwY8
+# LINK: https://github.com/fagga/transmission-remote-cli
+# DESC: ncurses frontend to transmission-daemon
+tsm-ncurse() { transmission-remote-cli ;}
+#}}}

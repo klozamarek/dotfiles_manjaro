@@ -1,5 +1,5 @@
 # base config for oh my zsh
-source /usr/share/oh-my-zsh/zshrc
+# source /usr/share/oh-my-zsh/zshrc
 
 #p10k instant prompt to make terminal open a bit snappier
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -16,10 +16,12 @@ ZSH_HIGHLIGHT_STYLES[comment]='fg=blue'
 [ -d ~/.config/zsh/config.d/ ] && source <(cat ~/.config/zsh/config.d/*)
 
 # Fix for foot terminfo not installed on most servers
-alias ssh="TERM=xterm-256color ssh"
+alias ssh="kitty +kitten ssh"
 source ~/.config/user-dirs.dirs
 
 # MK settings added
+fpath=($ZDOTDIR/external $fpath)
+
 source "$ZDOTDIR/aliases"
 source "$ZDOTDIR/scripts.sh"
 
@@ -28,7 +30,11 @@ eval "$(zoxide init zsh)"
 
 [ -n "$RANGER_LEVEL" ] && PS1="R$RANGER_LEVEL $PS1"
 
-bindkey -r '^l'                         # Clearing the shell is now done with CTRL+r
-bindkey -r '^g'
+# bindkey -r '^l'                         # Clearing the shell is now done with CTRL+r
+# bindkey -r '^g'
 bindkey -s '^r' 'clear\n'
 
+# Oh-My-ZSH plugins setup
+plugins=(
+  pass
+)
