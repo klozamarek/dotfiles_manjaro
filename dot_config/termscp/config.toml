@@ -12,5 +12,6 @@ ssh_config = "/home/ssserpent/.ssh/config"
 
 [remote.ssh_keys]
 "ssserpent@samsung-wifi" = "/home/ssserpent/.config/termscp/.ssh/ssserpent@samsung-wifi.key"
+"ssserpent@imac" = "/home/ssserpent/.config/termscp/.ssh/ssserpent@imac.key"
 "ssserpent@antix" = "/home/ssserpent/.config/termscp/.ssh/ssserpent@antix.key"
 "ssserpent@samsung-lan" = "/home/ssserpent/.config/termscp/.ssh/ssserpent@samsung-lan.key"

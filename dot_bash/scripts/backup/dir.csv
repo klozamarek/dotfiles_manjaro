@@ -1,4 +1,14 @@
-
+exclude:.cache
+exclude:.i3_old
+exclude:.local/share/mail
+exclude:.moonchild productions
+exclude:.mozilla
+exclude:.npm
+exclude:.pki
+exclude:.rustup
+exclude:.yarn
+exclude:go
+exclude:.config/BraveSoftware
 /home/ssserpent,antix:/mnt/raid/home_dir_texus_manjaro_bckp
 /run/media/ssserpent/HDD500_1/Movies_MK,antix:/mnt/raid/Movies_MK
 /run/media/ssserpent/HDD500_1/.free,antix:/mnt/raid/.free
