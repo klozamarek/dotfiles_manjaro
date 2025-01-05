@@ -513,6 +513,8 @@ cfg-w3m() {chezmoi edit /home/ssserpent/.w3m/config ;}
 cfg-w3mkeymap() {chezmoi edit /home/ssserpent/.w3m/keymap ;}
 cfg-w3mmailcap() {chezmoi edit /home/ssserpent/.w3m/mailcap ;}
 cfg-w3murimethodmap() {chezmoi edit /home/ssserpent/.w3m/urimethodmap ;}
+cfg-dir() {chezmoi edit /home/ssserpent/.bash/scripts/backup/dir.csv ;}
+cfg-backup() {chezmoi edit /home/ssserpent/.bash/scripts/backup/backup.sh ;}
 # cfg-() {chezmoi edit ;}
 #}}}
 # -- rld-...() configurations reload --{{{
