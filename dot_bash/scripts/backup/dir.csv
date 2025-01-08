@@ -1,5 +1,4 @@
 exclude:.cache
-exclude:.i3_old
 exclude:.local/share/mail
 exclude:.moonchild productions
 exclude:.mozilla
@@ -9,7 +8,7 @@ exclude:.rustup
 exclude:.yarn
 exclude:go
 exclude:.config/BraveSoftware
-/home/ssserpent,antix:/mnt/raid/home_dir_texus_manjaro_bckp
+/home/ssserpent,imac:/mnt/datastorage_bckp/home_dir_texus_manjaro_bckp
 /run/media/ssserpent/HDD500_1/Movies_MK,antix:/mnt/raid/Movies_MK
 /run/media/ssserpent/HDD500_1/.free,antix:/mnt/raid/.free
 /run/media/ssserpent/HDD500_1/TV_Series,antix:/mnt/raid/TV_Series
