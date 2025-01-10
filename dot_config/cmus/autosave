@@ -231,6 +231,7 @@ bind common y win-add-p
 bind common z player-prev
 bind common { vol -1% -0
 bind common } vol -0 -1%
+bind -f common u shell /home/ssserpent/.config/cmus/update_cmus_lib.sh
 fset 90s=date>=1990&date<2000
 fset classical=genre="Classical"
 fset missing-tag=!stream&(artist=""|album=""|title=""|tracknumber=-1|date=-1)
