@@ -15,17 +15,15 @@ function output-help()
     -v|version    Display script version
     -d|dry-run    Run rsync with --dry-run for test
     -x|delete     Run rsync with --delete for mirroring
-    -s|size-only  Run rsync with --size-only (no comparison with timestamps)
-    -e|exclude    Path to file with exclusion patterns"
+    -s|size-only  Run rsync with --size-only (no comparison with timestamps)"
 }
 
 function run() {
     local rsync_opts=(-avz)
-    local exclude_file=""
 
     __ScriptVersion="1.0"
 
-    while getopts ":hvdxse:" opt
+    while getopts ":hvdxs" opt
     do
     case $opt in
 
@@ -39,8 +37,6 @@ function run() {
 
         s|size-only  )  rsync_opts+=(--size-only); ;;
 
-        e|exclude  )  exclude_file="$OPTARG"; ;;
-
         * )  echo -e "\n  Option does not exist : $OPTARG\n"
             output-help; exit 1   ;;
 
@@ -50,13 +46,6 @@ function run() {
 
     [ "$#" == 0 ] && echo "You need to give a file as last argument" && exit 1
 
-    # Add exclusions if file is provided
-    if [ -n "$exclude_file" ] && [ -f "$exclude_file" ]; then
-        while read -r pattern; do
-            rsync_opts+=(--exclude "$pattern")
-        done < "$exclude_file"
-    fi
-
     local file="${!#}"
     while read -r line ; do
         src="$(eval echo -e "${line%,*}")"
@@ -65,7 +54,6 @@ function run() {
         echo "Copying $src to $dest from file $file"
         [ ! -d "$src" ] && echo "The directory $src does not exist -- NO BACKUP CREATED" && continue
 
-        echo "Final rsync command: rsync ${rsync_opts[*]} ${src}/ $dest"
         rsync "${rsync_opts[@]}" "${src}/" "$dest" 2> /tmp/errors
     done < "$file"
 

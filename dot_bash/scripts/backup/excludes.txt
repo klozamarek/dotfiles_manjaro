@@ -1,0 +1,11 @@
+.cache
+.local/share/mail
+.moonchild productions
+.mozilla
+.npm
+.pki
+.rustup
+.yarn
+go
+.config/BraveSoftware
+Calibre Library

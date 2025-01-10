@@ -132,8 +132,11 @@ n ()
 }
 #}}}
 # -- backup() Backup of chosen files/dirs --{{{
+# backup() {
+#     "$HOME/.bash/scripts/backup/backup.sh" "-x" "$@" "$HOME/.bash/scripts/backup/dir.csv"
+# }
 backup() {
-    "$HOME/.bash/scripts/backup/backup.sh" "-x" "$@" "$HOME/.bash/scripts/backup/dir.csv"
+    "$HOME/.bash/scripts/backup/backup.sh" "-x" "-e" "$HOME/.bash/scripts/backup/excludes.txt" "$@" "$HOME/.bash/scripts/backup/dir.csv"
 }
 #}}}
 # -- ftmuxp() --{{{
@@ -515,6 +518,7 @@ cfg-w3mmailcap() {chezmoi edit /home/ssserpent/.w3m/mailcap ;}
 cfg-w3murimethodmap() {chezmoi edit /home/ssserpent/.w3m/urimethodmap ;}
 cfg-dir() {chezmoi edit /home/ssserpent/.bash/scripts/backup/dir.csv ;}
 cfg-backup() {chezmoi edit /home/ssserpent/.bash/scripts/backup/backup.sh ;}
+cfg-excludes() {chezmoi edit /home/ssserpent/.bash/scripts/backup/excludes.txt ;}
 # cfg-() {chezmoi edit ;}
 #}}}
 # -- rld-...() configurations reload --{{{
@@ -573,7 +577,7 @@ tsm-altdownloadspeedunlimited() { transmission-remote --no-downlimit ;}
 tsm-limitupload() { transmission-remote --uplimit "${@:-10}" ;}	# upload default to 10kpbs, else enter your own
 tsm-limituploadunlimited() { transmission-remote --no-uplimit ;}
 tsm-askmorepeers() { transmission-remote -t"$1" --reannounce ;}
-tsm-daemon() { transmission-daemon ;}
+tsm-daemon() { transwrap.sh ;}
 tsm-quit() { killall transmission-daemon ;}
 tsm-add() { transmission-remote --add "$1" ;}
 tsm-hash() { transmission-remote --add "magnet:?xt=urn:btih:$1" ;}       # adding via hash info
@@ -591,5 +595,5 @@ tsm-show() { transmission-show "$1" ;}                          # show .torrent 
 # DEMO: http://www.youtube.com/watch?v=hLz7ditUwY8
 # LINK: https://github.com/fagga/transmission-remote-cli
 # DESC: ncurses frontend to transmission-daemon
-tsm-ncurse() { transmission-remote-cli ;}
+tsm-ncurse() { tremc ;}
 #}}}
