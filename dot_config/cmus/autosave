@@ -223,7 +223,7 @@ bind common s toggle shuffle
 bind common space win-toggle
 bind common t toggle show_remaining_time
 bind common tab win-next
-bind common u update-cache
+bind common u shell /home/ssserpent/.config/cmus/update_cmus_lib.sh
 bind common up win-up
 bind common v player-stop
 bind common x player-play
@@ -231,7 +231,6 @@ bind common y win-add-p
 bind common z player-prev
 bind common { vol -1% -0
 bind common } vol -0 -1%
-bind -f common u shell /home/ssserpent/.config/cmus/update_cmus_lib.sh
 fset 90s=date>=1990&date<2000
 fset classical=genre="Classical"
 fset missing-tag=!stream&(artist=""|album=""|title=""|tracknumber=-1|date=-1)

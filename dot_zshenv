@@ -17,4 +17,4 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # pass clipboard timout
 export PASSWORD_STORE_CLIP_TIME='90'    # set-up for 90 seconds clipboard clear for pass
 export BAT_THEME="gruvbox-dark"
-
+export CHTSH_CONF="$HOME/.config/.cht.sh"
