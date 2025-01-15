@@ -179,6 +179,7 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-commentary'
 Plug 'felipec/notmuch-vim'
 Plug 'alker0/chezmoi.vim'
+Plug 'fladson/vim-kitty', { 'tag': '*' }
 " Plug 'imain/notmuch-vim'
 call plug#end()"}}}
 " -- Plugin settings

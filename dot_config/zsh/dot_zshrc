@@ -23,6 +23,7 @@ source ~/.config/user-dirs.dirs
 fpath=($ZDOTDIR/external $fpath)
 
 source "$ZDOTDIR/aliases"
+source "$ZDOTDIR/sgpt_aliases"
 source "$ZDOTDIR/scripts.sh"
 
 eval "$(atuin init zsh --disable-ctrl-r)"
@@ -38,3 +39,5 @@ bindkey -s '^r' 'clear\n'
 plugins=(
   pass
 )
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
